@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Patient Registration</title>
+  </head>
+  <body>
+    {% if messages %} {% for message in messages%}
+
+    <p>{{ message }}</p>
+
+    {% endfor %} {% endif %}
+    <h1>{{ clinic_name }}</h1>
+
+    <h2>Patient Registration Page</h2>
+
+    <p>Attending Doctor: {{ doctor }}</p>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <p>
+        First Name:
+        <input type="text" name="first_name" />
+      </p>
+
+      <p>
+        Last Name:
+        <input type="text" name="last_name" />
+      </p>
+
+      <p>
+        Date of Birth:
+        <input type="date" name="date_of_birth" />
+      </p>
+
+      <p>
+        Gender:
+        <select name="gender">
+          <option value="M">Male</option>
+          <option value="F">Female</option>
+        </select>
+      </p>
+
+      <p>
+        Phone Number:
+        <input type="text" name="phone_number" />
+      </p>
+
+      <button type="submit">Save Patient</button>
+    </form>
+  </body>
+</html>
