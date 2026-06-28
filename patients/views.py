@@ -1,7 +1,25 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Patient
 from django.contrib import messages
+from django.db.models import Q
 
+
+def patient_detail(request, id):
+
+    patient = get_object_or_404(
+        Patient,
+        id=id
+    )
+
+    context = {
+        "patient": patient
+    }
+
+    return render(
+        request,
+        "patients/patient_detail.html",
+        context
+    )
 
 def register_patient(request):
 
@@ -41,8 +59,13 @@ def patient_list(request):
 
     if search:
         patients = patients.filter(
-            first_name__icontains=search
-        )
+            Q(mrn__icontains=search)
+            | Q(first_name__icontains=search)
+            | Q(last_name__icontains=search)
+            | Q(phone_number__icontains=search)
+    )
+
+        
 
     context = {
         "patients" : patients

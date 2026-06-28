@@ -25,8 +25,12 @@
 
       <tr>
         <td>{{ patient.mrn }}</td>
-        <td>{{ patient.first_name }}</td>
-        <td>{{ patient.last_name }}</td>
+        <td>
+          <a href="{% url 'patient_detail' patient.id %}">
+            {{ patient.first_name }} {{ patient.last_name }}
+          </a>
+        </td>
+
         <td>{{ patient.gender }}</td>
         <td>{{ patient.phone_number }}</td>
       </tr>
