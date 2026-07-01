@@ -15,3 +15,17 @@
 <p>Email: {{ patient.email }}</p>
 
 <p>Address: {{ patient.address }}</p>
+
+<a href="{% url 'create_visit' patient.id %}"> Start New Visit </a>
+
+<h2>Visit History</h2>
+
+{% for visit in visits %}
+
+<p>{{ visit.visit_date }} - {{ visit.chief_complaint }}</p>
+
+{% empty %}
+
+<p>No visits recorded.</p>
+
+{% endfor %}

@@ -11,8 +11,11 @@ def patient_detail(request, id):
         id=id
     )
 
+    visits = patient.visits.order_by("-visit_date")
+
     context = {
-        "patient": patient
+        "patient": patient,
+        "visits": visits,
     }
 
     return render(
@@ -41,7 +44,7 @@ def register_patient(request):
 
         messages.success(
             request,
-            f"Patient {patient.mrn} registered succesfully."
+            f"Patient {patient.mrn} - ({patient.first_name}  {patient.last_name}) registered succesfully."
         )
 
         return redirect("register_patient")
