@@ -22,8 +22,11 @@
 
 {% for visit in visits %}
 
-<p>{{ visit.visit_date }} - {{ visit.chief_complaint }}</p>
-
+<p>
+  <a href="{% url 'visit_detail' visit.pk %}">
+    {{ visit.visit_date }} - {{ visit.chief_complaint }}
+  </a>
+</p>
 {% empty %}
 
 <p>No visits recorded.</p>

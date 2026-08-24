@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Visit Details</title>
+  </head>
+
+  <body>
+    <h1>Visit Details</h1>
+
+    <hr />
+
+    <h2>Patient Information</h2>
+
+    <p>
+      <strong>MRN:</strong>
+      {{ visit.patient.mrn }}
+    </p>
+
+    <p>
+      <strong>Name:</strong>
+      {{ visit.patient.first_name }} {{ visit.patient.last_name }}
+    </p>
+
+    <p>
+      <strong>Date of Birth:</strong>
+      {{ visit.patient.date_of_birth }}
+    </p>
+
+    <p>
+      <strong>Gender:</strong>
+      {{ visit.patient.gender }}
+    </p>
+
+    <p>
+      <strong>Phone:</strong>
+      {{ visit.patient.phone_number }}
+    </p>
+
+    <hr />
+
+    <h2>Visit Information</h2>
+
+    <p>
+      <strong>Visit Date:</strong>
+      {{ visit.visit_date }}
+    </p>
+
+    <p>
+      <strong>Chief Complaint:</strong>
+      {{ visit.chief_complaint }}
+    </p>
+
+    <hr />
+
+    <h2>Clinical Consultation</h2>
+
+    {% if visit.consultation %}
+
+    <p>
+      <strong>History:</strong>
+      {{ visit.consultation.history }}
+    </p>
+
+    <p>
+      <strong>Examination:</strong>
+      {{ visit.consultation.examination }}
+    </p>
+
+    <p>
+      <strong>Assessment:</strong>
+      {{ visit.consultation.assessment }}
+    </p>
+
+    <p>
+      <strong>Plan:</strong>
+      {{ visit.consultation.plan }}
+    </p>
+
+    {% else %}
+
+    <p>No consultation recorded for this visit.</p>
+
+    {% endif %}
+
+    <hr />
+
+    <hr />
+
+    <h2>Vital Signs</h2>
+
+    {% for vital in visit.vital_signs.all %}
+
+    <h3>Recorded: {{ vital.recorded_at }}</h3>
+
+    <p>
+      <strong>Temperature:</strong>
+      {{ vital.temperature }} °C
+    </p>
+
+    <p>
+      <strong>Blood Pressure:</strong>
+      {{ vital.systolic_bp }}/{{ vital.diastolic_bp }} mmHg
+    </p>
+
+    <p>
+      <strong>Pulse Rate:</strong>
+      {{ vital.pulse_rate }} bpm
+    </p>
+
+    <p>
+      <strong>Respiratory Rate:</strong>
+      {{ vital.respiratory_rate }} /min
+    </p>
+
+    <p>
+      <strong>Oxygen Saturation:</strong>
+      {{ vital.oxygen_saturation }} %
+    </p>
+
+    <p>
+      <strong>Weight:</strong>
+      {{ vital.weight }} kg
+    </p>
+
+    <hr />
+
+    {% empty %}
+
+    <p>No vital signs recorded for this visit.</p>
+
+    {% endfor %}
+
+    <hr />
+
+    <hr />
+
+    <h2>Laboratory Investigations</h2>
+
+    <h3>Order Laboratory Investigations</h3>
+
+    <form method="post">
+      {% csrf_token %} {{ laboratory_form.as_p }}
+
+      <button type="submit">Order Selected Tests</button>
+    </form>
+
+    <hr />
+
+    <h3>Laboratory Orders for This Visit</h3>
+
+    {% for order in visit.laboratory_orders.all %}
+
+    <h4>Laboratory Order #{{ order.id }}</h4>
+
+    <p>
+      <strong>Ordered:</strong>
+      {{ order.ordered_at }}
+    </p>
+
+    {% for item in order.items.all %}
+
+    <div>
+      <p>
+        <strong>Test:</strong>
+        {{ item.test.name }}
+      </p>
+
+      <p>
+        <strong>Code:</strong>
+        {{ item.test.code }}
+      </p>
+
+      <p>
+        <strong>Status:</strong>
+        {{ item.get_status_display }}
+      </p>
+
+      <p>
+        <strong>Result:</strong>
+
+        {% if item.result %} {{ item.result }} {% else %} Pending {% endif %}
+      </p>
+    </div>
+
+    <hr />
+
+    {% empty %}
+
+    <p>No tests have been added to this order.</p>
+
+    {% endfor %} {% empty %}
+
+    <p>No laboratory orders recorded for this visit.</p>
+
+    {% endfor %}
+
+    <a href="{% url 'patient_detail' visit.patient.pk %}"> Back to Patient </a>
+  </body>
+</html>

@@ -30,6 +30,14 @@ class Patient(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
+
+    # Normalize names BEFORE saving
+        if self.first_name:
+            self.first_name = self.first_name.strip().capitalize()
+
+        if self.last_name:
+            self.last_name = self.last_name.strip().capitalize()
+
         is_new = self.pk is None
 
         super().save(*args, **kwargs)

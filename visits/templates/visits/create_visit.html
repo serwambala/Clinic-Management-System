@@ -1,19 +1,11 @@
 <h1>New Visit for {{ patient.first_name }} {{ patient.last_name }}</h1>
 
 <form method="POST">
+  {% csrf_token %} {{ form.as_p }}
 
-    {% csrf_token %}
-
-    {{ form.as_p }}
-
-    <button type="submit">
-        Save Visit
-    </button>
-
+  <button type="submit">Save Visit</button>
 </form>
 
-<br>
+<br />
 
-<a href="{% url 'patient_detail' patient.id %}">
-    Back to Patient Details
-</a>
+<a href="{% url 'patient_detail' patient.id %}"> Back to Patient Details </a>
