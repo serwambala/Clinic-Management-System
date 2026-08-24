@@ -1,0 +1,9 @@
+<h1>Laboratory Result Entry</h1>
+
+<h2>{{ order_item.test.name }}</h2>
+
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+
+  <button type="submit">Save Results</button>
+</form>

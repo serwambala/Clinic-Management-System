@@ -117,3 +117,32 @@ class LaboratoryOrderItem(models.Model):
 
     def __str__(self):
         return f"{self.order} - {self.test.name}"
+
+class LaboratoryResult(models.Model):
+
+    order_item = models.ForeignKey(
+        LaboratoryOrderItem,
+        on_delete=models.PROTECT,
+        related_name="results",
+    )
+
+    parameter = models.ForeignKey(
+        LaboratoryTestParameter,
+        on_delete=models.PROTECT,
+        related_name="results",
+    )
+
+    value = models.CharField(
+        max_length=255
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+        return f"{self.order_item.test.name} - {self.parameter.name}"

@@ -8,6 +8,7 @@ from .models import (
     LaboratoryOrder,
     LaboratoryOrderItem,
     LaboratoryTestParameter,
+    LaboratoryResult,
 )
 
 
@@ -15,3 +16,4 @@ admin.site.register(LaboratoryTest)
 admin.site.register(LaboratoryOrder)
 admin.site.register(LaboratoryOrderItem)
 admin.site.register(LaboratoryTestParameter)
+admin.site.register(LaboratoryResult)

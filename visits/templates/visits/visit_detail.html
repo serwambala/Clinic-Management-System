@@ -12,6 +12,10 @@
 
     <hr />
 
+    <!-- ========================= -->
+    <!-- PATIENT INFORMATION -->
+    <!-- ========================= -->
+
     <h2>Patient Information</h2>
 
     <p>
@@ -41,6 +45,10 @@
 
     <hr />
 
+    <!-- ========================= -->
+    <!-- VISIT INFORMATION -->
+    <!-- ========================= -->
+
     <h2>Visit Information</h2>
 
     <p>
@@ -54,6 +62,10 @@
     </p>
 
     <hr />
+
+    <!-- ========================= -->
+    <!-- CLINICAL CONSULTATION -->
+    <!-- ========================= -->
 
     <h2>Clinical Consultation</h2>
 
@@ -87,7 +99,9 @@
 
     <hr />
 
-    <hr />
+    <!-- ========================= -->
+    <!-- VITAL SIGNS -->
+    <!-- ========================= -->
 
     <h2>Vital Signs</h2>
 
@@ -135,7 +149,9 @@
 
     <hr />
 
-    <hr />
+    <!-- ========================= -->
+    <!-- LABORATORY INVESTIGATIONS -->
+    <!-- ========================= -->
 
     <h2>Laboratory Investigations</h2>
 
@@ -179,10 +195,26 @@
       </p>
 
       <p>
-        <strong>Result:</strong>
-
-        {% if item.result %} {{ item.result }} {% else %} Pending {% endif %}
+        <a href="{% url 'laboratory_result_entry' item.id %}">
+          Enter Results
+        </a>
       </p>
+
+      <h5>Laboratory Results</h5>
+
+      {% for result in item.results.all %}
+
+      <p>
+        <strong>{{ result.parameter.name }}:</strong>
+        {{ result.value }} {% if result.parameter.unit %} {{
+        result.parameter.unit }} {% endif %}
+      </p>
+
+      {% empty %}
+
+      <p>No results entered yet.</p>
+
+      {% endfor %}
     </div>
 
     <hr />
@@ -197,6 +229,14 @@
 
     {% endfor %}
 
-    <a href="{% url 'patient_detail' visit.patient.pk %}"> Back to Patient </a>
+    <!-- ========================= -->
+    <!-- BACK TO PATIENT -->
+    <!-- ========================= -->
+
+    <p>
+      <a href="{% url 'patient_detail' visit.patient.pk %}">
+        Back to Patient
+      </a>
+    </p>
   </body>
 </html>
