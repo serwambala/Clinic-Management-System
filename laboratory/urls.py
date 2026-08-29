@@ -10,4 +10,9 @@ urlpatterns = [
         name="laboratory_result_entry",
     ),
 
+    path(
+    "results/<int:order_item_id>/view/",
+    views.laboratory_result_detail,
+    name="laboratory_result_detail",
+)
 ]

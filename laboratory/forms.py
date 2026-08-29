@@ -21,9 +21,15 @@ class LaboratoryResultForm(forms.Form):
 
             parameters = order_item.test.parameters.all()
 
+            existing_results = {
+                result.parameter_id: result.value
+                for result in order_item.results.all()
+            }
+
             for parameter in parameters:
 
                 self.fields[str(parameter.id)] = forms.CharField(
                     label=parameter.name,
                     required=False,
+                    initial=existing_results.get(parameter.id, ""),
                 )

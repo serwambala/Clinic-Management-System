@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Laboratory Results</title>
+  </head>
+
+  <body>
+    <h1>Laboratory Results</h1>
+
+    <hr />
+
+    <h2>{{ order_item.test.name }}</h2>
+
+    <p>
+      <strong>Test Code:</strong>
+      {{ order_item.test.code }}
+    </p>
+
+    <p>
+      <strong>Order Item:</strong>
+      #{{ order_item.id }}
+    </p>
+
+    <p>
+      <strong>Status:</strong>
+      {{ order_item.get_status_display }}
+    </p>
+
+    <hr />
+
+    <h3>Results</h3>
+
+    {% for result in results %}
+
+    <p>
+      <strong>{{ result.parameter.name }}:</strong>
+      {{ result.value }} {{ result.parameter.unit }}
+    </p>
+    {% empty %}
+
+    <p>No results have been entered yet.</p>
+
+    {% endfor %}
+
+    <hr />
+
+    <a href="{% url 'visit_detail' order_item.order.visit.pk %}">
+      Back to Visit
+    </a>
+  </body>
+</html>

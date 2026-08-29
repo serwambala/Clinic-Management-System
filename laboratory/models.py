@@ -85,8 +85,10 @@ class LaboratoryOrderItem(models.Model):
     STATUS_CHOICES = [
         ("ordered", "Ordered"),
         ("collected", "Sample Collected"),
-        ("completed", "Completed"),
-    ]
+        ("verified", "Verified"),
+        ("released", "Released"),
+        ("cancelled", "Cancelled"),
+    ]    
 
     order = models.ForeignKey(
         LaboratoryOrder,
@@ -114,6 +116,29 @@ class LaboratoryOrderItem(models.Model):
         null=True,
         blank=True
     )
+
+    @property
+
+    def expected_results(self):
+        return self.test.parameters.count()
+
+
+    @property
+    def entered_results(self):
+        return self.results.count()
+
+
+    @property
+    def result_state(self):
+
+        if self.entered_results == 0:
+            return "No results"
+
+        elif self.entered_results < self.expected_results:
+            return "Partial results"
+
+        else:
+            return "Results complete"
 
     def __str__(self):
         return f"{self.order} - {self.test.name}"

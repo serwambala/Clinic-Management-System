@@ -153,18 +153,6 @@
     <!-- LABORATORY INVESTIGATIONS -->
     <!-- ========================= -->
 
-    <h2>Laboratory Investigations</h2>
-
-    <h3>Order Laboratory Investigations</h3>
-
-    <form method="post">
-      {% csrf_token %} {{ laboratory_form.as_p }}
-
-      <button type="submit">Order Selected Tests</button>
-    </form>
-
-    <hr />
-
     <h3>Laboratory Orders for This Visit</h3>
 
     {% for order in visit.laboratory_orders.all %}
@@ -179,10 +167,7 @@
     {% for item in order.items.all %}
 
     <div>
-      <p>
-        <strong>Test:</strong>
-        {{ item.test.name }}
-      </p>
+      <h5>{{ item.test.name }}</h5>
 
       <p>
         <strong>Code:</strong>
@@ -195,26 +180,39 @@
       </p>
 
       <p>
-        <a href="{% url 'laboratory_result_entry' item.id %}">
-          Enter Results
-        </a>
+        <strong>Results:</strong>
+        {{ item.entered_results }} / {{ item.expected_results }}
       </p>
 
-      <h5>Laboratory Results</h5>
-
-      {% for result in item.results.all %}
+      {% if item.result_state == "No results" %}
 
       <p>
-        <strong>{{ result.parameter.name }}:</strong>
-        {{ result.value }} {% if result.parameter.unit %} {{
-        result.parameter.unit }} {% endif %}
+        <strong>Result State:</strong>
+        No results entered
       </p>
 
-      {% empty %}
+      <a href="{% url 'laboratory_result_entry' item.id %}"> Enter Results </a>
 
-      <p>No results entered yet.</p>
+      {% elif item.result_state == "Partial results" %}
 
-      {% endfor %}
+      <p>
+        <strong>Result State:</strong>
+        Partial results
+      </p>
+
+      <a href="{% url 'laboratory_result_entry' item.id %}">
+        Continue Results
+      </a>
+
+      {% else %}
+
+      <p>
+        <strong>Result State:</strong>
+        Results complete
+      </p>
+
+      <a href="{% url 'laboratory_result_detail' item.id %}"> View Results </a>
+      {% endif %}
     </div>
 
     <hr />
@@ -228,11 +226,6 @@
     <p>No laboratory orders recorded for this visit.</p>
 
     {% endfor %}
-
-    <!-- ========================= -->
-    <!-- BACK TO PATIENT -->
-    <!-- ========================= -->
-
     <p>
       <a href="{% url 'patient_detail' visit.patient.pk %}">
         Back to Patient

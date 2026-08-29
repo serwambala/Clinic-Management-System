@@ -28,11 +28,15 @@ def laboratory_result_entry(request, order_item_id):
 
                 if value:
 
-                    LaboratoryResult.objects.create(
+                    LaboratoryResult.objects.update_or_create(
                         order_item=order_item,
                         parameter=parameter,
-                        value=value,
+                        defaults={
+                            "value": value,
+                        },
                     )
+
+                    
 
             return redirect(
                 "visit_detail",
@@ -51,5 +55,25 @@ def laboratory_result_entry(request, order_item_id):
         {
             "form": form,
             "order_item": order_item,
+        }
+    )
+
+def laboratory_result_detail(request, order_item_id):
+
+    order_item = get_object_or_404(
+        LaboratoryOrderItem,
+        id=order_item_id
+    )
+
+    results = order_item.results.select_related(
+        "parameter"
+    ).all()
+
+    return render(
+        request,
+        "laboratory/result_detail.html",
+        {
+            "order_item": order_item,
+            "results": results,
         }
     )
