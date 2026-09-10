@@ -113,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "Africa/Kampala"
 
 USE_I18N = True
 
@@ -125,4 +125,4 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-CLINIC_MRN_PREFIX = "CLN"
+CLINIC_MRN_PREFIX = "FR"
