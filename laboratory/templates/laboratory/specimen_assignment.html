@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Assign Specimen</title>
+  </head>
+  <body>
+    <h1>Assign Specimen</h1>
+
+    <p>
+      Patient:
+      <strong>
+        {{ visit.patient.first_name }} {{ visit.patient.last_name }}
+      </strong>
+    </p>
+
+    <p>
+      Laboratory Test:
+      <strong>{{ order_item.test.name }}</strong>
+    </p>
+
+    <p>Order Item #{{ order_item.id }}</p>
+
+    <form method="post">
+      {% csrf_token %} {{ form.as_p }} {% if form.no_available_specimens %}
+      <p>
+        <a href="{% url 'specimen_collection' visit_id=visit.id %}">
+          Collect a New Specimen
+        </a>
+      </p>
+      {% endif %}
+
+      <button type="submit">Assign Specimen</button>
+    </form>
+
+    <p>
+      <a href="{% url 'visit_detail' pk=visit.id %}"> Back to Visit </a>
+    </p>
+  </body>
+</html>

@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from visits.models import Visit
 from django.core.exceptions import ValidationError
 
@@ -187,6 +188,32 @@ class Specimen(models.Model):
         auto_now=True,
     )
 
+    def save(self, *args, **kwargs):
+
+        if not self.specimen_number:
+            year = timezone.localdate().year
+
+            last_specimen = (
+                Specimen.objects
+                .filter(specimen_number__startswith=f"SP-{year}-")
+                .order_by("-id")
+                .first()
+            )
+
+            if last_specimen:
+                last_number = int(
+                    last_specimen.specimen_number.split("-")[-1]
+                )
+                next_number = last_number + 1
+            else:
+                next_number = 1
+
+            self.specimen_number = (
+                f"SP-{year}-{next_number:06d}"
+            )
+
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.specimen_number
 
@@ -216,6 +243,8 @@ class SpecimenAssignment(models.Model):
         auto_now_add=True,
     )
 
+    is_active = models.BooleanField(default=True)
+
     def clean(self):
         if self.specimen.visit != self.order_item.order.visit:
             raise ValidationError(
@@ -242,6 +271,11 @@ class SpecimenAssignment(models.Model):
             models.UniqueConstraint(
                 fields=["specimen", "order_item"],
                 name="unique_specimen_order_item_assignment",
+            ),
+            models.UniqueConstraint(
+                fields=["order_item"],
+                condition=models.Q(is_active=True),
+                name="unique_active_specimen_assignment_per_order_item",
             ),
         ]
 

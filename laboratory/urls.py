@@ -11,8 +11,20 @@ urlpatterns = [
     ),
 
     path(
-    "results/<int:order_item_id>/view/",
-    views.laboratory_result_detail,
-    name="laboratory_result_detail",
-)
+        "results/<int:order_item_id>/view/",
+        views.laboratory_result_detail,
+        name="laboratory_result_detail",
+    ),
+
+    path(
+        "specimens/collect/<int:visit_id>/",
+        views.specimen_collection,
+        name="specimen_collection",
+    ),
+
+    path(
+        "specimens/assign/<int:order_item_id>/",
+        views.specimen_assignment,
+        name="specimen_assignment",
+    ),
 ]

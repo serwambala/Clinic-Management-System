@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Collect Specimen</title>
+  </head>
+  <body>
+    <h1>Collect Specimen</h1>
+
+    <p>
+      Patient:
+      <strong
+        >{{ visit.patient.first_name }} {{ visit.patient.last_name }}</strong
+      >
+    </p>
+
+    <p>Visit #{{ visit.id }}</p>
+
+    <form method="post">
+      {% csrf_token %} {{ form.as_p }}
+
+      <button type="submit">Collect Specimen</button>
+    </form>
+
+    <p>
+      <a href="{% url 'visit_detail' pk=visit.id %}"> Back to Visit </a>
+    </p>
+  </body>
+</html>

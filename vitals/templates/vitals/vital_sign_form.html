@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enter Vitals</title>
+  </head>
+
+  <body>
+    <h2>Enter Vitals</h2>
+
+    <p>
+      <strong>Patient:</strong>
+      {{ visit.patient }}
+    </p>
+
+    <p>
+      <strong>Visit:</strong>
+      #{{ visit.id }} — {{ visit.visit_date|date:"d M Y" }}
+    </p>
+
+    <form method="post">
+      {% csrf_token %} {{ form.as_p }}
+
+      <button type="submit">Save Vitals</button>
+    </form>
+  </body>
+</html>
