@@ -8,12 +8,14 @@ from .models import (
     LaboratoryResult,
     Specimen,
     SpecimenAssignment,
+    
 )
 
 from .forms import (
     LaboratoryResultForm,
     SpecimenCollectionForm,
     SpecimenAssignmentForm,
+    SpecimenReceivingForm,
 )
 
 def laboratory_result_entry(request, order_item_id):
@@ -133,6 +135,70 @@ def specimen_collection(request, visit_id):
         }
     )
 
+def specimen_receiving(request, specimen_id):
+
+    specimen = get_object_or_404(
+        Specimen,
+        id=specimen_id
+    )
+
+    if request.method == "POST":
+
+        form = SpecimenReceivingForm(
+            request.POST,
+            instance=specimen
+        )
+
+        if form.is_valid():
+
+            action = form.cleaned_data["action"]
+
+            with transaction.atomic():
+
+                if action == "received":
+
+                    specimen.status = "received"
+                    specimen.received_at = timezone.now()
+                    specimen.rejection_reason = ""
+
+                elif action == "rejected":
+
+                    specimen.status = "rejected"
+                    specimen.received_at = None
+                    specimen.rejection_reason = (
+                        form.cleaned_data["rejection_reason"]
+                    )
+
+                specimen.save(
+                    update_fields=[
+                        "status",
+                        "received_at",
+                        "rejection_reason",
+                        "updated_at",
+                    ]
+                )
+
+            return redirect(
+                "visit_detail",
+                pk=specimen.visit.id
+            )
+
+    else:
+
+        form = SpecimenReceivingForm(
+            instance=specimen
+        )
+
+    return render(
+        request,
+        "laboratory/specimen_receiving.html",
+        {
+            "form": form,
+            "specimen": specimen,
+            "visit": specimen.visit,
+        }
+    )
+
 def specimen_assignment(request, order_item_id):
     order_item = get_object_or_404(
         LaboratoryOrderItem,
@@ -140,6 +206,17 @@ def specimen_assignment(request, order_item_id):
     )
 
     visit = order_item.order.visit
+
+    active_assignment = (
+        order_item.specimen_assignments
+        .filter(is_active=True)
+        .select_related(
+            "specimen",
+            "specimen__specimen_type",
+            "specimen__container",
+        )
+        .first()
+    )
 
     if request.method == "POST":
         form = SpecimenAssignmentForm(
@@ -183,8 +260,11 @@ def specimen_assignment(request, order_item_id):
         request,
         "laboratory/specimen_assignment.html",
         {
+            
             "form": form,
             "order_item": order_item,
             "visit": visit,
+            "active_assignment": active_assignment,
+
         }
     )

@@ -155,63 +155,53 @@
 
     <h3>Laboratory Orders for This Visit</h3>
 
-    {% for order in visit.laboratory_orders.all %}
-
-    <h4>Laboratory Order #{{ order.id }}</h4>
-
     <p>
-      <strong>Ordered:</strong>
-      {{ order.ordered_at }}
+      <a href="{% url 'specimen_collection' visit_id=visit.id %}">
+        Collect New Specimen
+      </a>
     </p>
 
-    {% for item in order.items.all %}
+    <!-- ========================= -->
+    <!-- SPECIMENS -->
+    <!-- ========================= -->
+
+    <h3>Specimens for This Visit</h3>
+
+    {% for specimen in visit.specimens.all %}
 
     <div>
-      <h5>{{ item.test.name }}</h5>
+      <h4>{{ specimen.specimen_number }}</h4>
 
       <p>
-        <strong>Code:</strong>
-        {{ item.test.code }}
+        <strong>Specimen Type:</strong>
+        {{ specimen.specimen_type.name }}
+      </p>
+
+      <p>
+        <strong>Container:</strong>
+        {{ specimen.container.name }}
       </p>
 
       <p>
         <strong>Status:</strong>
-        {{ item.get_status_display }}
+        {{ specimen.get_status_display }}
       </p>
 
+      {% if specimen.rejection_reason %}
       <p>
-        <strong>Results:</strong>
-        {{ item.entered_results }} / {{ item.expected_results }}
+        <strong>Rejection Reason:</strong>
+        {{ specimen.rejection_reason }}
       </p>
+      {% endif %} {% if specimen.status == "collected" %}
 
-      {% if item.result_state == "No results" %}
-
-      <p>
-        <strong>Result State:</strong>
-        No results entered
-      </p>
-
-      <a href="{% url 'laboratory_result_entry' item.id %}"> Enter Results </a>
-
-      {% elif item.result_state == "Partial results" %}
-
-      <p>
-        <strong>Result State:</strong>
-        Partial results
-      </p>
-
-      <a href="{% url 'laboratory_result_entry' item.id %}">
-        Continue Results
+      <a href="{% url 'specimen_receiving' specimen_id=specimen.id %}">
+        Receive Specimen
       </a>
 
-      {% else %}
+      {% elif specimen.status == "received" %}
 
-      <p>
-        <strong>Result State:</strong>
-        Results complete
-      </p>
+      <p>Specimen is ready for assignment to laboratory tests.</p>
 
-      <a href="{% url 'laboratory_result_detail' item.id %}"> View Results </a>
       {% endif %}
     </div>
 
@@ -219,13 +209,137 @@
 
     {% empty %}
 
-    <p>No tests have been added to this order.</p>
-
-    {% endfor %} {% empty %}
-
-    <p>No laboratory orders recorded for this visit.</p>
+    <p>No specimens collected for this visit.</p>
 
     {% endfor %}
+
+        <!-- ========================= -->
+    <!-- LABORATORY ORDERS -->
+    <!-- ========================= -->
+
+    {% for order in visit.laboratory_orders.all %}
+
+      <h4>Laboratory Order #{{ order.id }}</h4>
+
+      <p>
+        <strong>Ordered:</strong>
+        {{ order.ordered_at }}
+      </p>
+
+      {% for item in order.items.all %}
+
+        <div>
+
+          <h5>{{ item.test.name }}</h5>
+
+          <p>
+            <strong>Code:</strong>
+            {{ item.test.code }}
+          </p>
+
+          <p>
+            <strong>Status:</strong>
+            {{ item.get_status_display }}
+          </p>
+
+          <p>
+            <strong>Results:</strong>
+            {{ item.entered_results }} / {{ item.expected_results }}
+          </p>
+
+          <!-- ========================= -->
+          <!-- CURRENT ASSIGNED SPECIMEN -->
+          <!-- ========================= -->
+
+          {% for assignment in item.specimen_assignments.all %}
+
+            {% if assignment.is_active %}
+
+              <p>
+                <strong>Assigned Specimen:</strong>
+                {{ assignment.specimen.specimen_number }}
+              </p>
+
+              <p>
+                <strong>Specimen Type:</strong>
+                {{ assignment.specimen.specimen_type.name }}
+              </p>
+
+              <p>
+                <strong>Container:</strong>
+                {{ assignment.specimen.container.name }}
+              </p>
+
+              <p>
+                <strong>Specimen Status:</strong>
+                {{ assignment.specimen.get_status_display }}
+              </p>
+
+            {% endif %}
+
+          {% endfor %}
+
+          <p>
+            <a href="{% url 'specimen_assignment' order_item_id=item.id %}">
+              Assign Specimen
+            </a>
+          </p>
+
+          <!-- ========================= -->
+          <!-- LABORATORY RESULTS -->
+          <!-- ========================= -->
+
+          {% if item.result_state == "No results" %}
+
+            <p>
+              <strong>Result State:</strong>
+              No results entered
+            </p>
+
+            <a href="{% url 'laboratory_result_entry' item.id %}">
+              Enter Results
+            </a>
+
+          {% elif item.result_state == "Partial results" %}
+
+            <p>
+              <strong>Result State:</strong>
+              Partial results
+            </p>
+
+            <a href="{% url 'laboratory_result_entry' item.id %}">
+              Continue Results
+            </a>
+
+          {% else %}
+
+            <p>
+              <strong>Result State:</strong>
+              Results complete
+            </p>
+
+            <a href="{% url 'laboratory_result_detail' item.id %}">
+              View Results
+            </a>
+
+          {% endif %}
+
+        </div>
+
+        <hr />
+
+      {% empty %}
+
+        <p>No tests have been added to this order.</p>
+
+      {% endfor %}
+
+    {% empty %}
+
+      <p>No laboratory orders recorded for this visit.</p>
+
+    {% endfor %}
+    
     <p>
       <a href="{% url 'patient_detail' visit.patient.pk %}">
         Back to Patient

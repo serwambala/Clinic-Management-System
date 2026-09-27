@@ -3,6 +3,7 @@
   <head>
     <title>Assign Specimen</title>
   </head>
+
   <body>
     <h1>Assign Specimen</h1>
 
@@ -20,17 +21,82 @@
 
     <p>Order Item #{{ order_item.id }}</p>
 
+    {% if active_assignment %}
+
+    <h2>Current Specimen</h2>
+
+    <p>
+      Specimen Number:
+      <strong> {{ active_assignment.specimen.specimen_number }} </strong>
+    </p>
+
+    <p>
+      Specimen Type:
+      <strong> {{ active_assignment.specimen.specimen_type.name }} </strong>
+    </p>
+
+    <p>
+      Container:
+      <strong> {{ active_assignment.specimen.container.name }} </strong>
+    </p>
+
+    <p>
+      Status:
+      <strong> {{ active_assignment.specimen.get_status_display }} </strong>
+    </p>
+
+    <hr />
+
+    {% if form.no_available_specimens %}
+
+    <p>
+      This laboratory test already has an active specimen assigned to it, and no
+      other compatible received specimen is currently available.
+    </p>
+
+    {% else %}
+
+    <h2>Change Assigned Specimen</h2>
+
+    <p>
+      Select another compatible received specimen below. The current assignment
+      will be preserved in the history.
+    </p>
+
     <form method="post">
-      {% csrf_token %} {{ form.as_p }} {% if form.no_available_specimens %}
-      <p>
-        <a href="{% url 'specimen_collection' visit_id=visit.id %}">
-          Collect a New Specimen
-        </a>
-      </p>
-      {% endif %}
+      {% csrf_token %} {{ form.as_p }}
+
+      <button type="submit">Change Assigned Specimen</button>
+    </form>
+
+    {% endif %} {% else %}
+
+    <h2>Assign a Specimen</h2>
+
+    {% if form.no_available_specimens %}
+
+    <p>No compatible received specimen is available.</p>
+
+    <p>
+      The specimen must be collected and received before it can be assigned to
+      this laboratory test.
+    </p>
+
+    <p>
+      <a href="{% url 'specimen_collection' visit_id=visit.id %}">
+        Collect New Specimen
+      </a>
+    </p>
+
+    {% else %}
+
+    <form method="post">
+      {% csrf_token %} {{ form.as_p }}
 
       <button type="submit">Assign Specimen</button>
     </form>
+
+    {% endif %} {% endif %}
 
     <p>
       <a href="{% url 'visit_detail' pk=visit.id %}"> Back to Visit </a>

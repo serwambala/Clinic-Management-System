@@ -23,8 +23,16 @@ urlpatterns = [
     ),
 
     path(
+        "specimens/receive/<int:specimen_id>/",
+        views.specimen_receiving,
+        name="specimen_receiving",
+    ),
+
+    path(
         "specimens/assign/<int:order_item_id>/",
         views.specimen_assignment,
         name="specimen_assignment",
     ),
+
+    
 ]

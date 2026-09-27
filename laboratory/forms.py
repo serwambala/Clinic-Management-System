@@ -51,7 +51,40 @@ class SpecimenCollectionForm(forms.ModelForm):
             "volume_unit",
             "notes",
         ]
+class SpecimenReceivingForm(forms.ModelForm):
 
+    ACTION_CHOICES = [
+        ("received", "Receive Specimen"),
+        ("rejected", "Reject Specimen"),
+    ]
+
+    action = forms.ChoiceField(
+        choices=ACTION_CHOICES,
+        widget=forms.RadioSelect,
+    )
+
+    class Meta:
+        model = Specimen
+        fields = [
+            "action",
+            "rejection_reason",
+        ]
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        action = cleaned_data.get("action")
+        rejection_reason = cleaned_data.get("rejection_reason")
+
+        if action == "rejected" and not rejection_reason:
+            self.add_error(
+                "rejection_reason",
+                "Please provide a reason for rejecting the specimen.",
+            )
+
+        return cleaned_data
+    
+    
 class SpecimenAssignmentForm(forms.ModelForm):
 
     def __init__(self, *args, order_item=None, **kwargs):
@@ -83,7 +116,10 @@ class SpecimenAssignmentForm(forms.ModelForm):
 
             self.fields["specimen"].queryset = (
                 Specimen.objects
-                .filter(specimen_filter)
+                .filter(
+                    specimen_filter,
+                    status="received",
+                )
                 .exclude(id__in=already_assigned_specimen_ids)
                 .distinct()
             )

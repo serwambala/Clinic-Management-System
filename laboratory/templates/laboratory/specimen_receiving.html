@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Receive Specimen</title>
+  </head>
+  <body>
+    <h1>Specimen Receiving</h1>
+
+    <p>
+      Patient:
+      <strong>
+        {{ visit.patient.first_name }} {{ visit.patient.last_name }}
+      </strong>
+    </p>
+
+    <p>
+      Specimen Number:
+      <strong>{{ specimen.specimen_number }}</strong>
+    </p>
+
+    <p>
+      Specimen Type:
+      <strong>{{ specimen.specimen_type.name }}</strong>
+    </p>
+
+    <p>
+      Container:
+      <strong>{{ specimen.container.name }}</strong>
+    </p>
+
+    <p>
+      Current Status:
+      <strong>{{ specimen.get_status_display }}</strong>
+    </p>
+
+    <form method="post">
+      {% csrf_token %} {{ form.as_p }}
+
+      <button type="submit">Save Specimen Status</button>
+    </form>
+
+    <p>
+      <a href="{% url 'visit_detail' pk=visit.id %}"> Back to Visit </a>
+    </p>
+  </body>
+</html>

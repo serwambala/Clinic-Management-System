@@ -148,8 +148,15 @@ class Specimen(models.Model):
         unique=True,
     )
 
+    STATUS_CHOICES = [
+        ("collected", "Collected"),
+        ("received", "Received"),
+        ("rejected", "Rejected"),
+    ]
+
     status = models.CharField(
-        max_length=30,
+        max_length=20,
+        choices=STATUS_CHOICES,
         default="collected",
     )
 
