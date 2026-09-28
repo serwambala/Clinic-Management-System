@@ -25,6 +25,22 @@ def laboratory_result_entry(request, order_item_id):
         id=order_item_id
     )
 
+    active_assignment = (
+        order_item.specimen_assignments
+        .filter(is_active=True)
+        .select_related("specimen")
+        .first()
+    )
+
+    if (
+        active_assignment is None
+        or active_assignment.specimen.status != "received"
+    ):
+        return redirect(
+            "specimen_assignment",
+            order_item_id=order_item.id
+        )
+
     if request.method == "POST":
 
         form = LaboratoryResultForm(
@@ -49,8 +65,6 @@ def laboratory_result_entry(request, order_item_id):
                             "value": value,
                         },
                     )
-
-                    
 
             return redirect(
                 "visit_detail",
