@@ -66,6 +66,22 @@ def laboratory_result_entry(request, order_item_id):
                         },
                     )
 
+            if order_item.entered_results == 0:
+
+                order_item.status = "collected"
+
+            elif order_item.entered_results < order_item.expected_results:
+
+                order_item.status = "results_in_progress"
+
+            else:
+
+                order_item.status = "ready_for_verification"
+
+            order_item.save(
+                update_fields=["status"]
+            )
+
             return redirect(
                 "visit_detail",
                 pk=order_item.order.visit.pk

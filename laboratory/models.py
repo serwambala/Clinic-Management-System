@@ -342,10 +342,12 @@ class LaboratoryOrderItem(models.Model):
     STATUS_CHOICES = [
         ("ordered", "Ordered"),
         ("collected", "Sample Collected"),
+        ("results_in_progress", "Results In Progress"),
+        ("ready_for_verification", "Ready for Verification"),
         ("verified", "Verified"),
         ("released", "Released"),
         ("cancelled", "Cancelled"),
-    ]    
+    ]
 
     order = models.ForeignKey(
         LaboratoryOrder,
@@ -360,7 +362,7 @@ class LaboratoryOrderItem(models.Model):
     )
 
     status = models.CharField(
-        max_length=20,
+        max_length=30,
         choices=STATUS_CHOICES,
         default="ordered",
     )
