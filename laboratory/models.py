@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from visits.models import Visit
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 class LaboratoryTest(models.Model):
 
@@ -365,6 +366,19 @@ class LaboratoryOrderItem(models.Model):
         max_length=30,
         choices=STATUS_CHOICES,
         default="ordered",
+    )
+
+    verified_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="verified_lab_results",
+    )
+
+    verified_at = models.DateTimeField(
+        null=True,
+        blank=True
     )
 
     result = models.TextField(

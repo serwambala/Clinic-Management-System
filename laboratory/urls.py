@@ -17,6 +17,12 @@ urlpatterns = [
     ),
 
     path(
+        "results/<int:order_item_id>/verify/",
+        views.laboratory_result_verify,
+        name="laboratory_result_verify",
+    ),
+
+    path(
         "specimens/collect/<int:visit_id>/",
         views.specimen_collection,
         name="specimen_collection",

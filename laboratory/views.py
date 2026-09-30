@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.db import transaction
+from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from visits.models import Visit
 
@@ -120,6 +121,49 @@ def laboratory_result_detail(request, order_item_id):
             "order_item": order_item,
             "results": results,
         }
+    )
+
+@login_required
+def laboratory_result_verify(request, order_item_id):
+
+    order_item = get_object_or_404(
+        LaboratoryOrderItem,
+        id=order_item_id
+    )
+
+    if request.method != "POST":
+        return redirect(
+            "laboratory_result_detail",
+            order_item_id=order_item.id
+        )
+
+    if (
+        order_item.status != "ready_for_verification"
+        or order_item.expected_results == 0
+        or order_item.entered_results != order_item.expected_results
+    ):
+        return redirect(
+            "laboratory_result_detail",
+            order_item_id=order_item.id
+        )
+
+    with transaction.atomic():
+
+        order_item.status = "verified"
+        order_item.verified_by = request.user
+        order_item.verified_at = timezone.now()
+
+        order_item.save(
+            update_fields=[
+                "status",
+                "verified_by",
+                "verified_at",
+            ]
+        )
+
+    return redirect(
+        "laboratory_result_detail",
+        order_item_id=order_item.id
     )
 
 def specimen_collection(request, visit_id):

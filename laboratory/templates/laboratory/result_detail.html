@@ -47,6 +47,33 @@
 
     <hr />
 
+    {% if order_item.status == "ready_for_verification" %}
+
+    <form
+      method="post"
+      action="{% url 'laboratory_result_verify' order_item.id %}"
+    >
+      {% csrf_token %}
+
+      <button type="submit">Verify Results</button>
+    </form>
+
+    {% elif order_item.status == "verified" %}
+
+    <p>
+      <strong>Verified by:</strong>
+      {{ order_item.verified_by.username }}
+    </p>
+
+    <p>
+      <strong>Verified at:</strong>
+      {{ order_item.verified_at }}
+    </p>
+
+    {% endif %}
+
+    <hr />
+
     <a href="{% url 'visit_detail' order_item.order.visit.pk %}">
       Back to Visit
     </a>

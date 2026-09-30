@@ -31,4 +31,6 @@ urlpatterns = [
     ),
 
     path("vitals/", include("vitals.urls")),
+
+    path("accounts/", include("django.contrib.auth.urls")),
 ]
