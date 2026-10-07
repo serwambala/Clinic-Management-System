@@ -381,6 +381,19 @@ class LaboratoryOrderItem(models.Model):
         blank=True
     )
 
+    released_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="released_lab_results",
+    )
+
+    released_at = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
     result = models.TextField(
         blank=True
     )

@@ -70,6 +70,37 @@
       {{ order_item.verified_at }}
     </p>
 
+    <form
+      method="post"
+      action="{% url 'laboratory_result_release' order_item.id %}"
+    >
+      {% csrf_token %}
+
+      <button type="submit">Release Results</button>
+    </form>
+
+    {% elif order_item.status == "released" %}
+
+    <p>
+      <strong>Verified by:</strong>
+      {{ order_item.verified_by.username }}
+    </p>
+
+    <p>
+      <strong>Verified at:</strong>
+      {{ order_item.verified_at }}
+    </p>
+
+    <p>
+      <strong>Released by:</strong>
+      {{ order_item.released_by.username }}
+    </p>
+
+    <p>
+      <strong>Released at:</strong>
+      {{ order_item.released_at }}
+    </p>
+
     {% endif %}
 
     <hr />

@@ -23,6 +23,12 @@ urlpatterns = [
     ),
 
     path(
+        "results/<int:order_item_id>/release/",
+        views.laboratory_result_release,
+        name="laboratory_result_release",
+    ),
+
+    path(
         "specimens/collect/<int:visit_id>/",
         views.specimen_collection,
         name="specimen_collection",

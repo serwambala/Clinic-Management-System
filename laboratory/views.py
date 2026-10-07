@@ -42,6 +42,12 @@ def laboratory_result_entry(request, order_item_id):
             order_item_id=order_item.id
         )
 
+    if order_item.status in ["verified", "released"]:
+        return redirect(
+            "laboratory_result_detail",
+            order_item_id=order_item.id
+        )
+
     if request.method == "POST":
 
         form = LaboratoryResultForm(
@@ -158,6 +164,45 @@ def laboratory_result_verify(request, order_item_id):
                 "status",
                 "verified_by",
                 "verified_at",
+            ]
+        )
+
+    return redirect(
+        "laboratory_result_detail",
+        order_item_id=order_item.id
+    )
+
+@login_required
+def laboratory_result_release(request, order_item_id):
+
+    order_item = get_object_or_404(
+        LaboratoryOrderItem,
+        id=order_item_id
+    )
+
+    if request.method != "POST":
+        return redirect(
+            "laboratory_result_detail",
+            order_item_id=order_item.id
+        )
+
+    if order_item.status != "verified":
+        return redirect(
+            "laboratory_result_detail",
+            order_item_id=order_item.id
+        )
+
+    with transaction.atomic():
+
+        order_item.status = "released"
+        order_item.released_by = request.user
+        order_item.released_at = timezone.now()
+
+        order_item.save(
+            update_fields=[
+                "status",
+                "released_by",
+                "released_at",
             ]
         )
 
