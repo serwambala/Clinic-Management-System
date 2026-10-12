@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.utils import timezone
 from visits.models import Visit
 
@@ -268,6 +269,20 @@ def specimen_receiving(request, specimen_id):
     if request.method == "POST":
 
         if specimen.status != "collected":
+
+            if specimen.status == "received":
+                messages.warning(
+                    request,
+                    "This specimen has already been received."
+                )
+
+            elif specimen.status == "rejected":
+                messages.warning(
+                    request,
+                    "This specimen has already been rejected. "
+                    "Follow the approved recovery or recollection procedure."
+                )
+
             return redirect(
                 "visit_detail",
                 pk=specimen.visit.id
