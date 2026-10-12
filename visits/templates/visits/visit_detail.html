@@ -279,11 +279,13 @@
 
           {% endfor %}
 
-          <p>
-            <a href="{% url 'specimen_assignment' order_item_id=item.id %}">
-              Assign Specimen
-            </a>
-          </p>
+          {% if item.status == "ordered" or item.status == "collected" or item.status == "results_in_progress" %}
+            <p>
+              <a href="{% url 'specimen_assignment' order_item_id=item.id %}">
+                Assign Specimen
+              </a>
+            </p>
+          {% endif %}
 
           <!-- ========================= -->
           <!-- LABORATORY RESULTS -->

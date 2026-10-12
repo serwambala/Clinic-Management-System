@@ -326,6 +326,16 @@ def specimen_assignment(request, order_item_id):
 
     visit = order_item.order.visit
 
+    if order_item.status in [
+        "ready_for_verification",
+        "verified",
+        "released",
+    ]:
+        return redirect(
+            "visit_detail",
+            pk=order_item.order.visit.pk
+        )
+    
     active_assignment = (
         order_item.specimen_assignments
         .filter(is_active=True)
