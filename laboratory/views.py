@@ -267,6 +267,12 @@ def specimen_receiving(request, specimen_id):
 
     if request.method == "POST":
 
+        if specimen.status != "collected":
+            return redirect(
+                "visit_detail",
+                pk=specimen.visit.id
+            )
+
         form = SpecimenReceivingForm(
             request.POST,
             instance=specimen
