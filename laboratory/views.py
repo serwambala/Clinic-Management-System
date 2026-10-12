@@ -42,7 +42,11 @@ def laboratory_result_entry(request, order_item_id):
             order_item_id=order_item.id
         )
 
-    if order_item.status in ["verified", "released"]:
+    if order_item.status in [
+        "verified",
+        "released",
+        "cancelled",
+    ]:
         return redirect(
             "laboratory_result_detail",
             order_item_id=order_item.id
