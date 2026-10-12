@@ -26,6 +26,16 @@ def laboratory_result_entry(request, order_item_id):
         id=order_item_id
     )
 
+    if order_item.status in [
+        "verified",
+        "released",
+        "cancelled",
+    ]:
+        return redirect(
+            "laboratory_result_detail",
+            order_item_id=order_item.id
+        )
+    
     active_assignment = (
         order_item.specimen_assignments
         .filter(is_active=True)
@@ -41,17 +51,7 @@ def laboratory_result_entry(request, order_item_id):
             "specimen_assignment",
             order_item_id=order_item.id
         )
-
-    if order_item.status in [
-        "verified",
-        "released",
-        "cancelled",
-    ]:
-        return redirect(
-            "laboratory_result_detail",
-            order_item_id=order_item.id
-        )
-
+    
     if request.method == "POST":
 
         form = LaboratoryResultForm(
