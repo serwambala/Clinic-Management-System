@@ -351,14 +351,36 @@ def specimen_assignment(request, order_item_id):
 
     visit = order_item.order.visit
 
-    if order_item.status in [
-        "ready_for_verification",
-        "verified",
-        "released",
-    ]:
+    if order_item.status == "cancelled":
+        messages.warning(
+            request,
+            "This laboratory order has been cancelled. "
+            "Specimen assignment is not permitted."
+        )
+
         return redirect(
             "visit_detail",
-            pk=order_item.order.visit.pk
+            pk=visit.pk
+        )
+
+    if (
+        order_item.status in [
+            "results_in_progress",
+            "ready_for_verification",
+            "verified",
+            "released",
+        ]
+        or order_item.results.exists()
+    ):
+        messages.warning(
+            request,
+            "Specimen assignment cannot be changed after "
+            "result entry has started or results have been recorded."
+        )
+
+        return redirect(
+            "visit_detail",
+            pk=visit.pk
         )
     
     active_assignment = (
